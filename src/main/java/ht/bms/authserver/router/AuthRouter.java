@@ -21,6 +21,7 @@ public class AuthRouter {
                 .path("/api/v1", builder -> builder
                         .add(baseRoute(RequestPredicates.POST("/auth"), authHandler::login))
                         .add(baseRoute(RequestPredicates.GET("/profile"),authHandler::getProfile))
+                        .add(baseRoute(RequestPredicates.GET("/isAuth"),authHandler::isAuth))
                 )
                 .build();
     }

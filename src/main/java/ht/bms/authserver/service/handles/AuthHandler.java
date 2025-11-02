@@ -1,10 +1,13 @@
 package ht.bms.authserver.service.handles;
 
 
+import ht.bms.authserver.domain.BmsAccount;
+import ht.bms.authserver.domain.repo.RetrytableRepo;
 import ht.bms.authserver.model.LoginRequest;
 import ht.bms.authserver.model.LoginResponse;
 import ht.bms.authserver.security.CurrentUser;
 import ht.bms.authserver.security.TokenProvider;
+import ht.bms.authserver.service.facade.AuthService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,12 +30,15 @@ public class AuthHandler {
     private final PasswordEncoder passwordEncoder;
     private final ReactiveUserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
+    private final AuthService service;
 
 
-    public AuthHandler(PasswordEncoder passwordEncoder, ReactiveUserDetailsService userDetailsService, TokenProvider tokenProvider) {
+
+    public AuthHandler(PasswordEncoder passwordEncoder, ReactiveUserDetailsService userDetailsService, TokenProvider tokenProvider,AuthService service) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
+        this.service = service;
     }
 
 
@@ -74,6 +80,13 @@ public class AuthHandler {
                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
       return ServerResponse.ok().body(user, LoginResponse.class);
 
+    }
+
+    public Mono<ServerResponse> isAuth(ServerRequest request) {
+        return request.principal().map(Principal::getName)
+                .flatMap(name->service.findByUsermane(name))
+                .flatMap(ServerResponse.ok()::bodyValue)
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 
 

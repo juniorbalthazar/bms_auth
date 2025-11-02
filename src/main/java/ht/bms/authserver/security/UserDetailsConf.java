@@ -33,7 +33,7 @@ public class UserDetailsConf implements ReactiveUserDetailsService {
     }
 
 /*    public Mono<UserDetails> findByUsername(String username) {
-        Optional<UserDetailsMore> userD= repo.findByUserName(username)
+        Optional<User> userD= repo.findByUserName(username)
                 .map(user -> new UserDetailsMore(user.getEmail(), new BCryptPasswordEncoder().encode(user.getPassword()), Collections.singleton(
                         new SimpleGrantedAuthority(user.getBmsRole().getRoleName())
                 ),user.getBmsUser().getUserId(),user.getBmsUser().getInstitutionId()));

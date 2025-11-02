@@ -1,56 +1,37 @@
 package ht.bms.authserver.security;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 
-public class UserDetailsMore  implements UserDetails {
+public class UserDetailsMore  extends User {
 
-    public UserDetailsMore(String email, String password, Collection<? extends GrantedAuthority> authorities, BigDecimal userId, BigDecimal institutionId) {
-    }
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
+   // public UserDetailsMore(String email, String password, Collection<? extends GrantedAuthority> authorities, BigDecimal userId, BigDecimal institutionId) {
+   // }
+    private BigDecimal institution;
+    private BigDecimal userId;
+    public UserDetailsMore(String username, String password, Collection<? extends GrantedAuthority> authorities, BigDecimal userId, BigDecimal institutionId) {
+        super(username, password, authorities);
+        this.institution =institutionId;
+        this.userId = userId;
     }
 
-    @Override
-    public String getUsername() {
-        return null;
+    public BigDecimal getInstitution() {
+        return institution;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
+    public void setInstitution(BigDecimal institution) {
+        this.institution = institution;
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
+    public BigDecimal getUserId() {
+        return userId;
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-
-    public BigDecimal userId() {
-        return null;
-    }
-
-    public BigDecimal InstitutionId() {
-        return null;
+    public void setUserId(BigDecimal userId) {
+        this.userId = userId;
     }
 }
