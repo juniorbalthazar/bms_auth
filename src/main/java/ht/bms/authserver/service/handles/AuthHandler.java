@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;
@@ -83,6 +84,11 @@ public class AuthHandler {
     }
 
     public Mono<ServerResponse> isAuth(ServerRequest request) {
+
+
+        String token = request.exchange().getRequest().getHeaders().getFirst("Authorization");
+
+
         return request.principal().map(Principal::getName)
                 .flatMap(name->service.findByUsermane(name))
                 .flatMap(ServerResponse.ok()::bodyValue)
