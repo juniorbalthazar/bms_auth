@@ -22,7 +22,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.http.HttpHeaders;
 import java.security.Principal;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 public class AuthHandler {
@@ -87,12 +90,14 @@ public class AuthHandler {
     }
 
     public Mono<ServerResponse> isAuth(ServerRequest request) {
-        String token =request.exchange().getRequest().getHeaders().getFirst("Authorization");
-               if (token == null || !token.startsWith("Bearer "))
+        var token =request.exchange().getRequest().getHeaders().getFirst(AUTHORIZATION);
+               if (token ==null || !token.startsWith("Bearer "))
                     return ServerResponse.status(HttpStatus.UNAUTHORIZED).build();
-        return ServerResponse.ok().body(service.findByUsermane(
-                currentUser.isTokenValid(token.substring( "Bearer ".length()))
-        ), AccountBean.class);
+        return ServerResponse.ok()
+                .body(service.findByUsermane(
+                      currentUser.isTokenValid(token.substring( "Bearer ".length()))
+                     ), AccountBean.class);
+
 
     }
 
