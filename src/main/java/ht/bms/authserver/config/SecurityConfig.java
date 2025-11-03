@@ -25,7 +25,7 @@ class SecurityConfig {
 
         return http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
+                        .pathMatchers("api/v1/auth/**").permitAll()//HttpMethod.POST,
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)

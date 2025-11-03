@@ -3,6 +3,7 @@ package ht.bms.authserver.service.handles;
 
 import ht.bms.authserver.domain.BmsAccount;
 import ht.bms.authserver.domain.repo.RetrytableRepo;
+import ht.bms.authserver.model.AccountBean;
 import ht.bms.authserver.model.LoginRequest;
 import ht.bms.authserver.model.LoginResponse;
 import ht.bms.authserver.security.CurrentUser;
@@ -23,7 +24,6 @@ import reactor.core.publisher.Mono;
 
 import java.security.Principal;
 
-
 @Service
 public class AuthHandler {
 
@@ -32,6 +32,9 @@ public class AuthHandler {
     private final ReactiveUserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
     private final AuthService service;
+
+    @Autowired
+    private CurrentUser currentUser;
 
 
 
@@ -84,15 +87,13 @@ public class AuthHandler {
     }
 
     public Mono<ServerResponse> isAuth(ServerRequest request) {
+        String token =request.exchange().getRequest().getHeaders().getFirst("Authorization");
+               if (token == null || !token.startsWith("Bearer "))
+                    return ServerResponse.status(HttpStatus.UNAUTHORIZED).build();
+        return ServerResponse.ok().body(service.findByUsermane(
+                currentUser.isTokenValid(token.substring( "Bearer ".length()))
+        ), AccountBean.class);
 
-
-        String token = request.exchange().getRequest().getHeaders().getFirst("Authorization");
-
-
-        return request.principal().map(Principal::getName)
-                .flatMap(name->service.findByUsermane(name))
-                .flatMap(ServerResponse.ok()::bodyValue)
-                .switchIfEmpty(ServerResponse.notFound().build());
     }
 
 

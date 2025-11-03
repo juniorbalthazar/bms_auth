@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.*;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -18,10 +19,12 @@ public class AuthRouter {
     @Bean
     public RouterFunction<ServerResponse> accountRoutes(){
         return RouterFunctions.route()
-                .path("/api/v1", builder -> builder
+                .path("/api/v1/auth", builder -> builder
                         .add(baseRoute(RequestPredicates.POST("/auth"), authHandler::login))
+                        .add(baseRoute(RequestPredicates.POST("/isAuth"),authHandler::isAuth))
+                )
+                .path("/api/v1/check", builder -> builder
                         .add(baseRoute(RequestPredicates.GET("/profile"),authHandler::getProfile))
-                        .add(baseRoute(RequestPredicates.GET("/isAuth"),authHandler::isAuth))
                 )
                 .build();
     }

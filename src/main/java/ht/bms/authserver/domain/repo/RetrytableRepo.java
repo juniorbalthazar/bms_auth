@@ -33,7 +33,7 @@ public class RetrytableRepo {
 
 
     /**
-     * find Calendar by year and month
+     * find by user name
      * @return
      */
 
@@ -41,6 +41,14 @@ public class RetrytableRepo {
     public Optional<BmsAccount> findByUserName(String username){
         return accountsRepository.findBmsAccount(username);
     }
+    /**
+     * find by user name
+     * @return
+     */
 
+    @Retryable(retryFor = SQLException.class, maxAttemptsExpression = "#{${retry-database.max-attempts}}", backoff = @Backoff(delayExpression = "#{${retry-database.backoff}}"))
+    public Optional<BmsAccount> findByUserId(BigDecimal userId){
+        return accountsRepository.findBmsAccountByUserId(userId);
+    }
 
 }
