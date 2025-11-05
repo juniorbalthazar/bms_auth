@@ -203,9 +203,9 @@ components:
         description: phone number of user
         example: +509 3701 1234
       enabled:
-        type: number
-        description: is account enabled 0=false 1=true
-        example: 1
+        type: boolean
+        description: is account enabled
+        example: true
       role:
         $ref: '#/components/schemas/RoleBean'
       user:
