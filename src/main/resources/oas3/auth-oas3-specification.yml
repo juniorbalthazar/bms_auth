@@ -1,0 +1,296 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://localhost:6295/calendar'
+    description: Local server
+info:
+  title: calendar
+  version: 1.0.0
+  description: API  that expose all endpoint for Process API
+  contact:
+    name: Lab
+    email: juniorbalthazar@yahoo.fr
+    url: https://github.com/juniorbalthazar/bms_calendar
+  license:
+    name: Appliquart 1.0
+    url: 'https://api.calendar.com/license'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: regular-users
+    description: Operations available to regular users
+paths:
+  /calendar/register:
+    post:
+      tags:
+        - regular-users
+      summary: save calendar informations.
+      operationId: saveCalender
+      description: post calendar informations
+      requestBody:
+        description: save calendar informations.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarRequest'
+        required: true
+      responses:
+        '201': # status code
+          description: A JSON string containing a boolean value if true is successfully ortherwise false
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+
+
+
+  /calendar/{startDate}/{endDate}:
+    get:
+      tags:
+        - regular-users
+      summary: list of calendar.
+      operationId: calendarBetweenDate
+      description: list of calendar between two dates
+      parameters:
+        - name: startDate
+          in: path
+          description: start date
+          example: 20-09-2025
+          required: true
+          schema:
+            type: Date
+        - name: endDate
+          in: path
+          description: end date
+          example: 25-09-2025
+          required: true
+          schema:
+            type: Date
+      responses:
+        '200': # status code
+          description: A JSON string containing a list of calendar information's
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarResponse'
+
+
+  /calendar/{date}:
+    get:
+      tags:
+        - regular-users
+      summary: list of users account.
+      operationId: usersFilter
+      description: list of users account with pagination and filter
+      parameters:
+        - name: date
+          in: path
+          example: 20-09-2025
+          required: true
+          schema:
+            type: Date
+            format: date
+      responses:
+        '200': # status code
+          description: A JSON string containing a list of calendar information's
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarResponse'
+
+
+
+components:
+  schemas:
+    ########################
+    #  API Specs  #
+    ########################
+    Response:
+      type: object
+      properties:
+        isSuccessfully:
+          type: boolean
+          example: true
+          description: true if operation is successfully otherwise false
+  RoleBean:
+    type: object
+    properties:
+      roleId:
+        type: number
+        description: role id
+        example: 100
+      roleName:
+        type: string
+        description: role name
+        example: Admin
+  UserBean:
+    type: object
+    properties:
+      userId:
+        type: number
+        description: user id
+        example: 100
+      firstName:
+        type: string
+        description: first name
+        example: john
+      gender:
+        type: string
+        description: gender of user
+        example: Male
+      lastName:
+        type: string
+        description: last name
+        example: doe
+      middleName:
+        type: string
+        description: middle name
+        example: alan
+      photo:
+        type: string
+        description: photo of user in base64
+        example: /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYa
+      phone:
+        type: string
+        description: phone number
+        example: +509 3701 1234
+      email:
+        type: string
+        description: email of user
+        example: admin@gouv.ht
+      nin:
+        type: string
+        description: national identification number
+        example: 001-2345-6789
+      nif:
+        type: string
+        description: fiscal identification number
+        example: 009-098-098-8
+      passport:
+        type: string
+        description: passport number
+        example: A12345678
+      nationalite:
+        type: string
+        description: nationality of user
+        example: Haitian
+      role:
+        type: string
+        description: role of user
+        example: Admin
+      office:
+        $ref: '#/components/schemas/OfficeBean'
+      institution:
+        $ref: '#/components/schemas/InstitutionBean'
+  AccountBean:
+    type: object
+    properties:
+      accountId:
+        type: number
+        description: role id
+        example: 100
+      assignId:
+        type: number
+        description: role id
+        example: 100
+      email:
+        type: string
+        format: text
+        description: email of user
+        example: admin@#gouv.ht
+      tel:
+        type: string
+        format: text
+        description: phone number of user
+        example: +509 3701 1234
+      enabled:
+        type: number
+        description: is account enabled 0=false 1=true
+        example: 1
+      role:
+        $ref: '#/components/schemas/RoleBean'
+      user:
+        $ref: '#/components/schemas/UserBean'
+
+
+
+
+
+  ##  Problem:
+  ##    $ref: 'problem-schema.yaml#/components/schemas/Problem'
+    Problem:
+      description: Describes the probblem in case of error.
+      type: object
+      title: Problem
+      required:
+        - Title
+      properties:
+        Title:
+          type: string
+          description: >-
+            A short, human-readable summary of the problem type.
+            it SHOULD not change from occurence to occurence of the problem. See [RFC7231], Section 3.4
+        Detail:
+          type: string
+          description:
+            A human-readable explanation specific to this occurence of the problem
+        ValidationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        BusinessErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessError'
+        TechnicalErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechnicalError'
+
+    ValidationError:
+      type: object
+      description: Validation of payload, url parameters  and request parameter to the specification of the OpenAPI contract
+      required:
+        - AttributeName
+        - Reason
+      properties:
+        AttributeName:
+          type: string
+          description: Name of the element in the payload, request parameter, URI parameter or header parameter
+        Reason:
+          type: string
+          description: A short human-readable summary of the reason.
+        Message:
+          type: string
+          description: A short human-readable summary of the message
+
+    BusinessError:
+      type: object
+      description: Validation of the business rules of the request. Happens after validation of the OpenAPI contract.
+      required:
+        - Code
+      properties:
+        Code:
+          type: string
+          description: An ISO  standard [https://www.iso20022.org/]
+        Reason:
+          type: string
+          description: A short human-readable summary of the reason.
+        Message:
+          type: string
+          description: A short human-readable summary of the message
+
+    TechnicalError:
+      type: object
+      description: This type of error occurs during an irrecoverable technical problem.
+      required:
+        - Code
+      properties:
+        Code:
+          type: string
+          description: An ISO  standard [https://www.iso20022.org/]
+        Reason:
+          type: string
+          description: A short human-readable summary of the reason.
+        Message:
+          type: string
+          description: A short human-readable summary of the message
